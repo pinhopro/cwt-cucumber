@@ -72,7 +72,15 @@ void cwt_cucumber::print_results() const noexcept
   {
     report::print_json_to_sink();
   }
-  else
+  // A bare --report-json is the only case that has to stay silent on the
+  // terminal: it writes JSON to stdout, and the summary would sit in the
+  // middle of it. A named file gets the JSON on disk and this same summary,
+  // matching the live per-scenario lines already printed during the run.
+  if (!internal::get_program_args().is_set(
+          internal::program_args::arg::report_json) ||
+      !internal::get_program_args()
+           .get_value(internal::program_args::arg::report_json)
+           .empty())
   {
     print_failed_scenarios();
     log::report(log::new_line);

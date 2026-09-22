@@ -135,7 +135,11 @@ void program_args::initialize(int argc, const char* argv[])
     }
   }
 
-  if (is_set(program_args::arg::report_json))
+  // Only a report on stdout has to silence the log: a log line would sit in
+  // the middle of the JSON. When a file is named the JSON goes there and
+  // stdout stays free for the run.
+  if (is_set(program_args::arg::report_json) &&
+      get_value(program_args::arg::report_json).empty())
   {
     cuke::log::disable();
   }
