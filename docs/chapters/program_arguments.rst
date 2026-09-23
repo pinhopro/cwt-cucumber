@@ -52,8 +52,11 @@ Suppress detailed output and print only the final result.
 Dry Run: ``-d`` / ``--dry-run``
 -------------------------------
 
-Check that all steps are defined without actually executing them.  
+Check that all steps are defined without actually executing them.
 Useful to verify step definitions.
+
+Hooks still run: ``--dry-run`` skips only the steps themselves, not ``BEFORE``/``AFTER``/``BEFORE_ALL``/``AFTER_ALL`` hooks.
+A hook that asserts on real setup work therefore executes that work as usual, and a failing assertion inside it fails the run, even though no step ran.
 
 Verbose: ``-v`` / ``--verbose``
 -------------------------------
@@ -71,6 +74,7 @@ JSON Report: ``--report-json``
 
 Print test results as JSON to stdout or a specified file.  
 A bare ``--report-json`` writes the JSON to stdout and stays silent otherwise; naming a file writes the JSON there and leaves the terminal output as usual.  
+Naming a file keeps the terminal output as well, the same as a run without ``--report-json``; leaving the file out prints JSON only, to stdout.
 A small example of the JSON report output:
 
 .. code-block:: json
@@ -80,6 +84,12 @@ A small example of the JSON report output:
       "description": "This is my cucumber-cpp hello world",
       "elements": [
         {
+          "after": [
+            { "result": { "status": "passed" } }
+          ],
+          "before": [
+            { "result": { "status": "passed" } }
+          ],
           "id": "My first feature;First Scenario",
           "keyword": "Scenario",
           "line": 4,
@@ -108,6 +118,9 @@ A small example of the JSON report output:
       ]
     }
   ]
+
+``before`` and ``after`` hold one entry per ``BEFORE``/``AFTER`` hook that actually ran for that scenario, in the order it ran; a failed hook's entry also carries an ``error_message``.
+A scenario with no hook that ran has neither key, rather than an empty array.
 
 .. note::
    This is a simplified snippet; actual output contains all scenarios, steps, and additional metadata.
