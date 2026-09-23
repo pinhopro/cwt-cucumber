@@ -206,6 +206,13 @@ class report_json_logging : public ::testing::Test
   }
 };
 
+TEST_F(report_json_logging, no_flags_keeps_the_run_visible)
+{
+  const char* argv[] = {"cucumber"};
+  const std::string out = run_with(1, argv);
+  EXPECT_NE(out.find("a scenario"), std::string::npos);
+}
+
 TEST_F(report_json_logging, a_named_file_keeps_the_run_visible)
 {
   const std::string path = report_json_path();
@@ -252,6 +259,30 @@ TEST_F(report_json_logging, print_results_w_named_file_also_prints_the_summary)
   // just printed the terminal summary.
   ASSERT_TRUE(std::filesystem::exists(path));
   EXPECT_GT(std::filesystem::file_size(path), 0u);
+}
+
+TEST_F(report_json_logging,
+       print_results_w_no_flags_prints_full_run_and_summary)
+{
+  const char* argv[] = {"cucumber"};
+  cuke::cwt_cucumber cucumber(1, argv);
+
+  const char* script = R"*(
+      Feature: a feature
+      Scenario: a scenario
+      Given a step
+    )*";
+  cuke::parser p;
+  p.parse_script(script);
+  cuke::test_runner runner;
+  p.for_each_scenario(runner);
+
+  testing::internal::CaptureStdout();
+  cucumber.print_results();
+  const std::string out = testing::internal::GetCapturedStdout();
+
+  EXPECT_NE(out.find("1 Scenario ("), std::string::npos);
+  EXPECT_NE(out.find("1 Step ("), std::string::npos);
 }
 
 TEST_F(report_json_logging, print_results_w_bare_option_prints_json_only)

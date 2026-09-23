@@ -31,6 +31,7 @@
 - A `#` starts a comment only as the first non blank character of a line, so `a#b` and `issue #7` stay text ([144](https://github.com/ThoSe1990/cwt-cucumber/pull/144))
 - An escaped `\"` no longer closes a string value, so the real closing quote is no longer read as the opening quote of a new, unterminated one ([144](https://github.com/ThoSe1990/cwt-cucumber/pull/144))
 - A feature file that does not parse crashed the runner with a SEGV in `parser::for_each_scenario()`, which dereferenced the document the parser had already cleared; such a file is now skipped and fails the run instead of being reported as a success ([144](https://github.com/ThoSe1990/cwt-cucumber/pull/144))
+- `--report-json` silenced the live output even when a file was named, so a run could show its progress or write a report but never both ([145](https://github.com/ThoSe1990/cwt-cucumber/issues/145))
 
 ## [2.9] 2026-06-26
 

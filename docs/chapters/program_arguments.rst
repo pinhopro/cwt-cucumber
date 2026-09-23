@@ -70,6 +70,7 @@ JSON Report: ``--report-json``
 ------------------------------
 
 Print test results as JSON to stdout or a specified file.  
+A bare ``--report-json`` writes the JSON to stdout and stays silent otherwise; naming a file writes the JSON there and leaves the terminal output as usual.  
 A small example of the JSON report output:
 
 .. code-block:: json
